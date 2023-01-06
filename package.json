@@ -1,0 +1,27 @@
+{
+  "name": "twitter-integration-api",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ghost620/Twitter-integration-API.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ghost620/Twitter-integration-API/issues"
+  },
+  "homepage": "https://github.com/Ghost620/Twitter-integration-API#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "twitter-api-sdk": "^1.2.1",
+    "twitter-api-v2": "^1.13.0"
+  }
+}
