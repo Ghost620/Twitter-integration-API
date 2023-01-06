@@ -5,10 +5,11 @@ const twitterClient = new TwitterApi('AAAAAAAAAAAAAAAAAAAAAGo2lAEAAAAA9Jp%2FHIWa
 const readOnlyClient = twitterClient.readOnly;
 
 import express from 'express';
-
 import cors from 'cors';
-
 import bodyParser from "body-parser";
+import fs from "fs"
+import {stringify} from 'csv-stringify'
+
 const app = express()
 const port = process.env.PORT || 3000
 app.use(cors())
@@ -46,10 +47,16 @@ app.post('/twitter-data', async (req, response) => {
         ).then(async (res) => {
 
             const dataCsv = res._realData.data.map((tweet) => (
-                { Prompt: data['username'], Completion: tweet.text }
+                { Prompt: `Write an engaging tweet by Twitter user @${data['username']}` , Completion: tweet.text }
             ))
 
-            console.log(dataCsv)
+            stringify(dataCsv, {
+                header : true,
+                columns : { Prompt : "Prompt", Completion: "Completion" }
+              }, (err, output) => {
+                fs.writeFileSync("demoB.csv", output);
+                console.log("OK");
+            });
 
             response.status(200).send(res)
         }).catch((err) => {
