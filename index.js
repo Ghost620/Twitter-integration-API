@@ -55,8 +55,10 @@ app.post('/twitter-data', async (req, response) => {
                 header : true,
                 columns : { Prompt : "Prompt", Completion: "Completion" }
               }, (err, output) => {
-                fs.writeFileSync(`${uuidv4()}.csv`, output);
-                console.log("OK");
+                const filename = `${uuidv4()}.csv`
+                fs.writeFileSync(filename, output);
+                var data = fs.readFileSync(filename);
+                console.log(data.toString('base64'));
             });
 
             response.status(200).send(res)
