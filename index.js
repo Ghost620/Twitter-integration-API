@@ -8,7 +8,8 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from "body-parser";
 import fs from "fs"
-import {stringify} from 'csv-stringify'
+import { stringify } from 'csv-stringify'
+import { v4 as uuidv4 } from 'uuid';
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -54,7 +55,7 @@ app.post('/twitter-data', async (req, response) => {
                 header : true,
                 columns : { Prompt : "Prompt", Completion: "Completion" }
               }, (err, output) => {
-                fs.writeFileSync("demoB.csv", output);
+                fs.writeFileSync(`${uuidv4()}.csv`, output);
                 console.log("OK");
             });
 

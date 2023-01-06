@@ -22,7 +22,7 @@
     "cors": "^2.8.5",
     "csv-stringify": "^6.2.3",
     "express": "^4.18.2",
-    "twitter-api-sdk": "^1.2.1",
-    "twitter-api-v2": "^1.13.0"
+    "twitter-api-v2": "^1.13.0",
+    "uuid": "^9.0.0"
   }
 }
