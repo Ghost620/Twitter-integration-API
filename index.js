@@ -9,6 +9,7 @@ import cors from 'cors';
 import bodyParser from "body-parser";
 import fs from "fs"
 import { stringify } from 'csv-stringify'
+import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
 const app = express()
@@ -48,22 +49,48 @@ app.post('/twitter-data', async (req, response) => {
         ).then(async (res) => {
 
             const dataCsv = res._realData.data.map((tweet) => (
-                { Prompt: `Write an engaging tweet by Twitter user @${data['username']}` , Completion: tweet.text }
+                { Prompt: `Write an engaging tweet by Twitter user @${data["username"]}` , Completion: tweet.text }
             ))
 
             stringify(dataCsv, {
                 header : true,
                 columns : { Prompt : "Prompt", Completion: "Completion" }
-              }, (err, output) => {
-                const filename = `${uuidv4()}.csv`
+              }, async (err, output) => {
+                const filename = `tweets-${data['username']}.csv`
                 fs.writeFileSync(filename, output);
-                var data = fs.readFileSync(filename);
-                console.log(data.toString('base64'));
+                var filedata = fs.readFileSync(filename);
+
+                var dataDb = JSON.stringify({
+                    "upload": {
+                        "filename": filename,
+                        "contents": filedata.toString('base64'),
+                        "private": false
+                    }
+                });
+    
+                var config = {
+                    method: 'patch',
+                    url: `https://no-code-ai-model-builder.com/version-test/api/1.1/obj/user/${data['user_id']}`,
+                    headers: { 
+                        'Authorization': 'Bearer a93b979a285cc2cc945e767a8d078dad', 
+                        'Content-Type': 'application/json'
+                    },
+                    data : dataDb
+                };
+    
+                await axios(config)
+                .then( () => {
+                    response.status(200).send(res)
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+                
             });
 
-            response.status(200).send(res)
         }).catch((err) => {
-            response.status(err.code).send(err.data)
+            console.log(err)
+            //response.status(err.code).send(err.data)
         })
 
     }
