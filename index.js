@@ -53,10 +53,10 @@ app.post('/twitter-data', async (req, response) => {
             ).then(async (res) => {
     
                 const dataCsv = res._realData.data.map((tweet) => (
-                    { Prompt: `Write an engaging tweet by Twitter user @${data["username"]}` , Completion: tweet.text }
+                    tweet.referenced_tweets ? null : { Prompt: `Write an engaging tweet by Twitter user @${data["username"]}` , Completion: tweet.text }
                 ))
-    
-                stringify(dataCsv, {
+
+                stringify(dataCsv.filter(Boolean), {
                     header : true,
                     columns : { Prompt : "Prompt", Completion: "Completion" }
                   }, async (err, output) => {
@@ -108,4 +108,4 @@ app.post('/twitter-data', async (req, response) => {
 
 app.listen(port, () => {
     console.log(`listening on PORT: ${port}`)
-  })
+})
