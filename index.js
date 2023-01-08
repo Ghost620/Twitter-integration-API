@@ -47,6 +47,7 @@ app.post('/twitter-data', async (req, response) => {
             await readOnlyClient.v2.userTimeline(
                 data["twitter_id"] , { 
                   exclude: ["replies", "retweets"],
+                  "tweet.fields": ["in_reply_to_user_id", "referenced_tweets"],
                   max_results: data["max_results"] ? data["max_results"] : 10,
                 }
             ).then(async (res) => {
@@ -71,8 +72,7 @@ app.post('/twitter-data', async (req, response) => {
                         }
                     });
     
-                    const URL = (data['env'] == "dev") ? `https://no-code-ai-model-builder.com/version-test/api/1.1/obj/user/${data['user_id']}`
-                     : ( (data['env'] == "prd") ? `https://no-code-ai-model-builder.com/api/1.1/obj/user/${data['user_id']}` : '' )
+                    const URL = (data['env'] == "dev") ? `https://no-code-ai-model-builder.com/version-test/api/1.1/obj/user/${data['user_id']}` : `https://no-code-ai-model-builder.com/api/1.1/obj/user/${data['user_id']}`
     
                     var config = {
                         method: 'patch',
@@ -89,12 +89,14 @@ app.post('/twitter-data', async (req, response) => {
                         response.status(200).send(res)
                     })
                     .catch(function (error) {
-                        response.status(406).send({error: error.cause, message: "Failed to create/upload Tweets file "})
+                        response.status(406).send({error: error.cause, message: "Failed to upload Tweets file "})
                     });
                     
                 });
     
             }).catch((err) => {
+                //console.log(err.message)
+                if (err instanceof TypeError) { response.status(406).send({message: "Failed to create Tweets file"}) }
                 response.status(err.code).send(err.data)
             })
 
